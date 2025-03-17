@@ -219,10 +219,34 @@
             const container = document.querySelector('.container');
             try {
                 const canvas = await html2canvas(container);
+                
+                // 将Canvas转换为Blob对象
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(blob => resolve(blob), 'image/png');
+                });
+                
+                // 检查是否支持Web Share API
+                if (navigator.share && navigator.canShare({ files: [blob] })) {
+                    try {
+                        const file = new File([blob], `扫描记录_${new Date().toLocaleString().replace(/[/:]/g, '-')}.png`, { type: 'image/png' });
+                        await navigator.share({
+                            files: [file]
+                        });
+                        return;
+                    } catch (err) {
+                        console.log('分享取消或失败，尝试其他方式保存');
+                    }
+                }
+                
+                // 如果Web Share API不可用或失败，使用传统下载方式
+                const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.download = `扫描记录_${new Date().toLocaleString().replace(/[\/:]/g, '-')}.png`;
-                link.href = canvas.toDataURL();
+                link.download = `扫描记录_${new Date().toLocaleString().replace(/[/:]/g, '-')}.png`;
+                link.href = url;
                 link.click();
+                
+                // 清理URL对象
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch (err) {
                 console.error('导出图片失败:', err);
                 alert('导出图片失败，请稍后重试。');
