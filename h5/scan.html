@@ -216,36 +216,39 @@
         }
 
         async function exportImage() {
-            const container = document.querySelector('.container');
+            const container = document.createElement('div');
+            container.style.padding = '20px';
+            container.style.backgroundColor = '#ffffff';
+            container.style.borderRadius = '8px';
+            container.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            
+            const totalCount = document.getElementById('total-count').textContent;
+            const totalCountElement = document.createElement('div');
+            totalCountElement.textContent = `总扫描人数：${totalCount}`;
+            totalCountElement.style.fontSize = '16px';
+            totalCountElement.style.marginBottom = '10px';
+            container.appendChild(totalCountElement);
+
+            scanList.forEach(item => {
+                const scanItem = document.createElement('div');
+                scanItem.style.marginBottom = '10px';
+                scanItem.style.fontSize = '14px';
+                scanItem.textContent = `姓名: ${item.name}, 手机号: ${item.phone}`;
+                container.appendChild(scanItem);
+            });
+
             try {
                 const canvas = await html2canvas(container);
-                
-                // 将Canvas转换为Blob对象
                 const blob = await new Promise(resolve => {
                     canvas.toBlob(blob => resolve(blob), 'image/png');
                 });
-                
-                // 检查是否支持Web Share API
-                if (navigator.share && navigator.canShare({ files: [blob] })) {
-                    try {
-                        const file = new File([blob], `扫描记录_${new Date().toLocaleString().replace(/[/:]/g, '-')}.png`, { type: 'image/png' });
-                        await navigator.share({
-                            files: [file]
-                        });
-                        return;
-                    } catch (err) {
-                        console.log('分享取消或失败，尝试其他方式保存');
-                    }
-                }
-                
-                // 如果Web Share API不可用或失败，使用传统下载方式
+
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.download = `扫描记录_${new Date().toLocaleString().replace(/[/:]/g, '-')}.png`;
                 link.href = url;
                 link.click();
-                
-                // 清理URL对象
+
                 setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch (err) {
                 console.error('导出图片失败:', err);
