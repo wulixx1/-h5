@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>二维码扫描统计</title>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,18 +18,48 @@
             background-color: white;
             padding: 20px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-export {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-export:hover {
+            background-color: #096dd9;
+        }
+        .btn-reset {
+            background-color: #ff4d4f;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #cf1322;
+        }
+        #video-container {
+            width: 100%;
             max-width: 640px;
             margin: 0 auto;
             position: relative;
-        }
-        .video-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         #qr-video {
             width: 100%;
@@ -96,13 +127,20 @@
 </head>
 <body>
     <div class="container">
-        <div class="video-container">
+        <div class="header">
+            <h1>二维码扫描统计</h1>
+            <div class="button-group">
+                <button class="btn btn-export" onclick="exportImage()">导出图片</button>
+                <button class="btn btn-reset" onclick="resetData()">重置数据</button>
+            </div>
+        </div>
+        <div id="video-container">
             <video id="qr-video" playsinline></video>
             <div id="scan-region-highlight"></div>
         </div>
         <div class="stats">
-            <div class="stats-item">总扫描次数：<span id="total-scans">0</span></div>
-            <div class="stats-item">今日扫描次数：<span id="today-scans">0</span></div>
+            <div class="stats-item">总扫描人数：<span id="total-count">0</span></div>
+            <div class="stats-item">最近扫描时间：<span id="last-scan-time">-</span></div>
         </div>
         <div class="scan-list" id="scan-list"></div>
     </div>
@@ -175,6 +213,28 @@
                     <div class="scan-time">${item.time}</div>
                 </div>
             `).join('');
+        }
+
+        async function exportImage() {
+            const container = document.querySelector('.container');
+            try {
+                const canvas = await html2canvas(container);
+                const link = document.createElement('a');
+                link.download = `扫描记录_${new Date().toLocaleString().replace(/[\/:]/g, '-')}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            } catch (err) {
+                console.error('导出图片失败:', err);
+                alert('导出图片失败，请稍后重试。');
+            }
+        }
+
+        function resetData() {
+            if (confirm('确定要清空所有扫描记录吗？此操作不可恢复。')) {
+                scannedData.clear();
+                scanList = [];
+                updateUI();
+            }
         }
 
         // 启动摄像头
