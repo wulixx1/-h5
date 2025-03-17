@@ -228,7 +228,7 @@
             totalCountElement.style.fontSize = '16px';
             totalCountElement.style.marginBottom = '10px';
             container.appendChild(totalCountElement);
-
+        
             scanList.forEach(item => {
                 const scanItem = document.createElement('div');
                 scanItem.style.marginBottom = '10px';
@@ -236,19 +236,20 @@
                 scanItem.textContent = `姓名: ${item.name}, 手机号: ${item.phone}`;
                 container.appendChild(scanItem);
             });
-
+        
             try {
                 const canvas = await html2canvas(container);
                 const blob = await new Promise(resolve => {
                     canvas.toBlob(blob => resolve(blob), 'image/png');
                 });
-
+        
+                // 使用传统下载方式保存图片
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.download = `扫描记录_${new Date().toLocaleString().replace(/[/:]/g, '-')}.png`;
                 link.href = url;
                 link.click();
-
+        
                 setTimeout(() => URL.revokeObjectURL(url), 60000);
             } catch (err) {
                 console.error('导出图片失败:', err);
