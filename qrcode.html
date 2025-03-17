@@ -52,6 +52,20 @@
         #qrcode img {
             margin: 0 auto;
         }
+        .address-link {
+            display: block;
+            margin-top: 15px;
+            color: #1890ff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .payment-notice {
+            margin-top: 15px;
+            color: #ff4d4f;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -68,6 +82,8 @@
 
         <button onclick="generateQRCode()">生成二维码</button>
         <div id="qrcode"></div>
+        <a href="https://uri.amap.com/marker?position=116.481485,39.990464&name=北京市新时代国际中心" class="address-link" target="_blank">登车地址：北京市新时代国际中心</a>
+        <div class="payment-notice">如您未付款请及时付款，已付款请忽略</div>
     </div>
 
     <script>/**
