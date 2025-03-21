@@ -102,8 +102,8 @@
 
         <button onclick="generateQRCode()">生成二维码</button>
         <div id="qrcode"></div>
-        <a href="https://ditu.amap.com/search?query=%E5%85%A8%E6%97%B6%E9%B2%9C%E7%94%9F%E6%B4%BB%E8%B6%85%E5%B8%82(%E6%81%92%E5%A4%A7%E5%8D%8E%E5%BA%9C%E5%BA%97)&city=150400&geoobj=118.11857%7C41.867919%7C120.096109%7C42.673747&zoom=10" class="address-link" target="_blank">赤峰->天津路线登车地址：全时鲜生活超市(恒大华府店)</a>
-        <a href="https://ditu.amap.com/place/B0FFI5K95U" class="address-link" target="_blank">天津->赤峰路线登车地址：天津铁道博物馆</a>
+        <a href="https://ditu.amap.com/search?query=%E5%85%A8%E6%97%B6%E9%B2%9C%E7%94%9F%E6%B4%BB%E8%B6%85%E5%B8%82(%E6%81%92%E5%A4%A7%E5%8D%8E%E5%BA%9C%E5%BA%97)&city=150400&geoobj=118.11857%7C41.867919%7C120.096109%7C42.673747&zoom=10" class="address-link" target="_blank">赤峰->天津路线   登车地址：全时鲜生活超市(恒大华府店)</a>
+        <a href="https://ditu.amap.com/place/B0FFI5K95U" class="address-link" target="_blank">天津->赤峰路线    登车地址：天津铁道博物馆</a>
         <div class="payment-notice">如您未付款请及时付款，已付款请忽略</div>
     </div>
 
@@ -142,7 +142,9 @@
             qrcodeDiv.classList.add('show');
 
             // 显示地址链接和付款提示
-            document.querySelector('.address-link').classList.add('show');
+            document.querySelectorAll('.address-link').forEach(function(link) {
+                link.classList.add('show');
+            });
             document.querySelector('.payment-notice').classList.add('show');
         }
     </script>
